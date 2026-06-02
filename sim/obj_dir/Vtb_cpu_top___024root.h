@@ -23,8 +23,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_cpu_top___024root final {
     CData/*3:0*/ tb_cpu_top__DOT__bus_be;
     CData/*3:0*/ tb_cpu_top__DOT__u_cpu__DOT__mem_be_q;
     CData/*3:0*/ tb_cpu_top__DOT__u_cpu__DOT__lsu_be;
-    CData/*0:0*/ tb_cpu_top__DOT__u_cpu__DOT__instr_we;
-    CData/*0:0*/ tb_cpu_top__DOT__u_cpu__DOT__reg_we;
     CData/*3:0*/ tb_cpu_top__DOT__u_cpu__DOT__u_control_fsm__DOT__state_q;
     CData/*3:0*/ tb_cpu_top__DOT__u_cpu__DOT__u_control_fsm__DOT__state_d;
     CData/*0:0*/ tb_cpu_top__DOT__u_mem__DOT__pending_q;
@@ -49,8 +47,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_cpu_top___024root final {
     IData/*31:0*/ tb_cpu_top__DOT__u_cpu__DOT__alu_result;
     IData/*31:0*/ tb_cpu_top__DOT__u_cpu__DOT__lsu_store_wdata;
     IData/*31:0*/ tb_cpu_top__DOT__u_cpu__DOT__lsu_load_data;
-    IData/*31:0*/ tb_cpu_top__DOT__u_cpu__DOT__wb_data;
-    IData/*31:0*/ tb_cpu_top__DOT__u_cpu__DOT__pc_plus4;
     IData/*31:0*/ tb_cpu_top__DOT__u_cpu__DOT__pc_next_calc;
     IData/*31:0*/ tb_cpu_top__DOT__u_mem__DOT__rdata_q;
     IData/*31:0*/ tb_cpu_top__DOT__u_mem__DOT__word_idx;

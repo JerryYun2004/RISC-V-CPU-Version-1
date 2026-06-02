@@ -28,10 +28,9 @@ static uint64_t parse_max_cycles(int argc, char **argv) {
     return max_cycles;
 }
 
-static bool parse_wave_enable(int argc, char **argv) {
+static bool has_arg(int argc, char **argv, const std::string &target) {
     for (int i = 1; i < argc; ++i) {
-        std::string arg(argv[i]);
-        if (arg == "+wave") return true;
+        if (std::string(argv[i]) == target) return true;
     }
     return false;
 }
@@ -60,7 +59,8 @@ int main(int argc, char **argv) {
     Verilated::commandArgs(argc, argv);
 
     const uint64_t max_cycles = parse_max_cycles(argc, argv);
-    const bool wave_enable = parse_wave_enable(argc, argv);
+    const bool wave_enable = has_arg(argc, argv, "+wave");
+    const bool expect_trap = has_arg(argc, argv, "+expect-trap");
 
     Vtb_cpu_top *top = new Vtb_cpu_top;
 
@@ -116,6 +116,7 @@ int main(int argc, char **argv) {
     std::cout << "\n[TB] cycles      = " << cycles << "\n";
     std::cout << "[TB] pc          = 0x" << std::hex << top->pc_o << std::dec << "\n";
     std::cout << "[TB] result_code = 0x" << std::hex << code << std::dec << "\n";
+    std::cout << "[TB] trapped     = " << (trapped ? "yes" : "no") << "\n";
 
 #if VM_TRACE
     if (tfp) {
@@ -126,6 +127,19 @@ int main(int argc, char **argv) {
 
     top->final();
     delete top;
+
+    if (expect_trap) {
+        if (trapped) {
+            std::cout << "[TB] PASS: expected trap observed.\n";
+            return 0;
+        }
+        if (timeout) {
+            std::cerr << "[TB] FAIL: timeout before expected trap.\n";
+            return 3;
+        }
+        std::cerr << "[TB] FAIL: expected trap, but program completed without trap.\n";
+        return 4;
+    }
 
     if (trapped) {
         std::cerr << "[TB] FAIL: CPU entered trap state.\n";

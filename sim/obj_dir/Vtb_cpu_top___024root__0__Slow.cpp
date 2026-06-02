@@ -182,27 +182,15 @@ VL_ATTR_COLD void Vtb_cpu_top___024root___stl_sequent__TOP__0(Vtb_cpu_top___024r
             }
         }
     }
+    vlSelfRef.trap_o = (8U == (IData)(vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__u_control_fsm__DOT__state_q));
     vlSelfRef.pc_o = vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__pc_q;
-    vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__pc_plus4 
-        = ((IData)(4U) + vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__pc_q);
     vlSelfRef.tb_cpu_top__DOT__bus_we = 0U;
     vlSelfRef.tb_cpu_top__DOT__bus_wdata = 0U;
-    vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__instr_we 
-        = ((IData)(vlSelfRef.tb_cpu_top__DOT__u_mem__DOT__pending_q) 
-           & (2U == (IData)(vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__u_control_fsm__DOT__state_q)));
     vlSelfRef.__VdfgRegularize_hebeb780c_0_2 = ((IData)(vlSelfRef.tb_cpu_top__DOT__u_mem__DOT__pending_q) 
                                                 & (6U 
                                                    == (IData)(vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__u_control_fsm__DOT__state_q)));
     vlSelfRef.tb_cpu_top__DOT__bus_addr = 0U;
     vlSelfRef.tb_cpu_top__DOT__bus_be = 0U;
-    vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__wb_data 
-        = ((0U == (3U & (IData)(vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__decoded_q)))
-            ? vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__alu_result_q
-            : ((1U == (3U & (IData)(vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__decoded_q)))
-                ? vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__load_result_q
-                : (vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__alu_result_q 
-                   & (- (IData)((2U == (3U & (IData)(vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__decoded_q))))))));
-    vlSelfRef.trap_o = (8U == (IData)(vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__u_control_fsm__DOT__state_q));
     vlSelfRef.tb_cpu_top__DOT__bus_req = 0U;
     if ((1U == (IData)(vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__u_control_fsm__DOT__state_q))) {
         vlSelfRef.tb_cpu_top__DOT__bus_we = 0U;
@@ -977,11 +965,6 @@ VL_ATTR_COLD void Vtb_cpu_top___024root___stl_sequent__TOP__0(Vtb_cpu_top___024r
             = (0x0000000800000000ULL | (0x00000007ffffffffULL 
                                         & vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__decoded));
     }
-    vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__reg_we = 
-        ((7U == (IData)(vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__u_control_fsm__DOT__state_q)) 
-         & ((~ (IData)(vlSelfRef.trap_o)) & (IData)(
-                                                    (vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__decoded 
-                                                     >> 0x00000022U))));
     tb_cpu_top__DOT__u_cpu__DOT__rs1_val = (vlSelfRef.tb_cpu_top__DOT__u_cpu__DOT__u_regfile__DOT__regs_q
                                             [(0x0000001fU 
                                               & (IData)(
@@ -1511,10 +1494,6 @@ VL_ATTR_COLD void Vtb_cpu_top___024root___ctor_var_reset(Vtb_cpu_top___024root* 
     vlSelf->tb_cpu_top__DOT__u_cpu__DOT__lsu_be = VL_SCOPED_RAND_RESET_I(4, __VscopeHash, 17781823809034767760ull);
     vlSelf->tb_cpu_top__DOT__u_cpu__DOT__lsu_store_wdata = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 14524260676808430673ull);
     vlSelf->tb_cpu_top__DOT__u_cpu__DOT__lsu_load_data = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 18424265811935880241ull);
-    vlSelf->tb_cpu_top__DOT__u_cpu__DOT__instr_we = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 8829168785981299445ull);
-    vlSelf->tb_cpu_top__DOT__u_cpu__DOT__reg_we = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 13238023935620634841ull);
-    vlSelf->tb_cpu_top__DOT__u_cpu__DOT__wb_data = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 8203063712410486979ull);
-    vlSelf->tb_cpu_top__DOT__u_cpu__DOT__pc_plus4 = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 323155785723359536ull);
     vlSelf->tb_cpu_top__DOT__u_cpu__DOT__pc_next_calc = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 9203627905572530635ull);
     for (int __Vi0 = 0; __Vi0 < 32; ++__Vi0) {
         vlSelf->tb_cpu_top__DOT__u_cpu__DOT__u_regfile__DOT__regs_q[__Vi0] = VL_SCOPED_RAND_RESET_I(32, __VscopeHash, 4288163995339776267ull);
