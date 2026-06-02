@@ -42,3 +42,36 @@ Memory model:
 ## Current Status
 
 The CPU passes the current CPU-only Verilator regression suite. The verified scope includes basic RV32I arithmetic, immediate operations, load/store behavior, branch redirects, jump redirects, x0 behavior, and JALR alignment behavior.
+
+
+# Verification Log
+
+## Current Regression Status
+
+The CPU passes the current CPU-only Verilator regression suite.
+
+## Passing Functional Tests
+
+| Test | Purpose | Result |
+|---|---|---|
+| `test_addi` | Basic arithmetic and writeback | PASS |
+| `test_lw_sw` | Word load/store memory path | PASS |
+| `test_branch` | Conditional branch and PC redirect | PASS |
+| `test_jump` | JAL/JALR jump and link behavior | PASS |
+| `test_rtype` | R-type ALU operations | PASS |
+| `test_itype` | I-type ALU operations | PASS |
+| `test_load_store` | Byte, halfword, and word load/store behavior | PASS |
+| `test_x0` | Confirms writes to x0 are ignored | PASS |
+| `test_jalr_align` | Confirms JALR clears target bit 0 | PASS |
+
+## Passing Trap Tests
+
+| Test | Purpose | Expected Behavior | Result |
+|---|---|---|---|
+| `test_illegal` | Unsupported instruction handling | Trap | PASS |
+| `test_misaligned_load` | Misaligned load handling | Trap | PASS |
+| `test_misaligned_store` | Misaligned store handling | Trap | PASS |
+
+## Current Verification Scope
+
+The current CPU-only Verilator setup verifies the main RV32I integer datapath, register file behavior, branch/jump control flow, load/store data handling, and basic trap behavior for illegal and misaligned accesses.
