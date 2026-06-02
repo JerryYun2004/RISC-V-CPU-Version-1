@@ -28,3 +28,17 @@ Memory model:
 - Changed the control FSM to use the current decoded instruction during decode/execute decision.
 - Fixed jump instructions so `JAL/JALR` write `PC + 4` to `rd`.
 - Fixed PC update timing so branch/jump targets use the current calculated next PC instead of a stale registered value.
+
+## Extra RV32I Directed Tests
+
+| Test | Purpose | Result |
+|---|---|---|
+| `test_rtype` | R-type ALU operations: add, sub, logic, shifts, comparisons | PASS |
+| `test_itype` | I-type ALU operations: addi, logic immediates, shifts, comparisons | PASS |
+| `test_load_store` | Byte, halfword, word loads/stores and sign/zero extension | PASS |
+| `test_x0` | Confirms writes to x0 are ignored | PASS |
+| `test_jalr_align` | Confirms JALR clears bit 0 and writes PC+4 to rd | PASS |
+
+## Current Status
+
+The CPU passes the current CPU-only Verilator regression suite. The verified scope includes basic RV32I arithmetic, immediate operations, load/store behavior, branch redirects, jump redirects, x0 behavior, and JALR alignment behavior.
