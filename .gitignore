@@ -4,3 +4,8 @@ sim/obj_dir/
 sim/build/
 sim/tb_cpu.vcd
 sim/logs/
+
+# SoC simulation build outputs
+sim_soc/obj_dir/
+sim_soc/build/
+sim_soc/tb_soc.vcd
