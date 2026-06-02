@@ -19,7 +19,8 @@ loop:
     addi x7, x0, 3
     bne  x4, x7, loop
 
-    addi x5, x0, pass
+    lui  x5, %hi(pass)
+    addi x5, x5, %lo(pass)
     jalr x0, 0(x5)
 
 pass:
