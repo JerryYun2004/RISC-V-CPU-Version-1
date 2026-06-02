@@ -1,0 +1,6 @@
+
+# Verilator / simulation build outputs
+sim/obj_dir/
+sim/build/
+sim/tb_cpu.vcd
+sim/logs/
