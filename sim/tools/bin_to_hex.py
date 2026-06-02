@@ -1,34 +1,34 @@
 #!/usr/bin/env python3
-"""Convert a raw little-endian RV32 binary into one 32-bit word per line hex.
+"""Convert a little-endian RISC-V binary into readmemh 32-bit word hex.
 
-Usage:
-  python3 tools/bin_to_hex.py input.bin output.hex
+Input .bin bytes from objcopy are little-endian instruction/data bytes.
+The simple Verilator memory model expects one 32-bit instruction/data word per
+line, written in normal 8-hex-digit order, e.g. bytes 93 00 50 00 become
+00500093.
 """
+
 from __future__ import annotations
 
-import sys
+import argparse
 from pathlib import Path
 
 
 def main() -> int:
-    if len(sys.argv) != 3:
-        print("Usage: python3 tools/bin_to_hex.py input.bin output.hex", file=sys.stderr)
-        return 2
+    parser = argparse.ArgumentParser()
+    parser.add_argument("input_bin", type=Path)
+    parser.add_argument("output_hex", type=Path)
+    args = parser.parse_args()
 
-    in_path = Path(sys.argv[1])
-    out_path = Path(sys.argv[2])
-
-    data = in_path.read_bytes()
+    data = args.input_bin.read_bytes()
     if len(data) % 4 != 0:
         data += b"\x00" * (4 - (len(data) % 4))
 
-    lines = []
-    for i in range(0, len(data), 4):
-        word = int.from_bytes(data[i:i + 4], byteorder="little", signed=False)
-        lines.append(f"{word:08x}")
+    args.output_hex.parent.mkdir(parents=True, exist_ok=True)
+    with args.output_hex.open("w", encoding="utf-8") as f:
+        for i in range(0, len(data), 4):
+            word = int.from_bytes(data[i : i + 4], byteorder="little", signed=False)
+            f.write(f"{word:08x}\n")
 
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text("\n".join(lines) + "\n")
     return 0
 
 

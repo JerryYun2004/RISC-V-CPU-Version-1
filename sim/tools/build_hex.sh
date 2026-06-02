@@ -1,53 +1,59 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Build one assembly test into a .hex file for simple_mem.sv.
-#
-# Usage from sim/:
-#   tools/build_hex.sh asm_reference/test_rtype.S
-#   tools/build_hex.sh asm_reference/test_rtype.S programs/test_rtype.hex
-#
-# Requires a RISC-V GNU toolchain in PATH. Default prefix:
-#   riscv64-unknown-elf-
-# Override with:
-#   CROSS_COMPILE=riscv32-unknown-elf- tools/build_hex.sh ...
-
 if [[ $# -lt 1 || $# -gt 2 ]]; then
-  echo "Usage: $0 input.S [output.hex]" >&2
+  echo "Usage: $0 asm_tests/test_name.S [programs/test_name.hex]" >&2
   exit 2
 fi
 
-CROSS_COMPILE="${CROSS_COMPILE:-riscv64-unknown-elf-}"
-CC="${CROSS_COMPILE}gcc"
-OBJCOPY="${CROSS_COMPILE}objcopy"
-OBJDUMP="${CROSS_COMPILE}objdump"
-
 ASM="$1"
-BASE="$(basename "${ASM%.*}")"
-OUT_HEX="${2:-programs/${BASE}.hex}"
-BUILD_DIR="build_hex/${BASE}"
+OUT_HEX="${2:-}"
 
-mkdir -p "$BUILD_DIR" "$(dirname "$OUT_HEX")"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SIM_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+BUILD_DIR="$SIM_DIR/build/asm"
+mkdir -p "$BUILD_DIR" "$SIM_DIR/programs"
 
-ELF="$BUILD_DIR/${BASE}.elf"
-BIN="$BUILD_DIR/${BASE}.bin"
-DIS="$BUILD_DIR/${BASE}.dump"
+if [[ -z "$OUT_HEX" ]]; then
+  base="$(basename "$ASM" .S)"
+  OUT_HEX="$SIM_DIR/programs/${base}.hex"
+fi
 
-"$CC" \
-  -march=rv32i \
-  -mabi=ilp32 \
-  -nostdlib \
-  -nostartfiles \
-  -ffreestanding \
-  -Wl,-T,tools/link.ld \
-  -Wl,--no-relax \
-  -o "$ELF" \
-  "$ASM"
+if [[ -n "${RISCV_PREFIX:-}" ]]; then
+  GCC="${RISCV_PREFIX}-gcc"
+  OBJCOPY="${RISCV_PREFIX}-objcopy"
+  OBJDUMP="${RISCV_PREFIX}-objdump"
+elif command -v riscv64-unknown-elf-gcc >/dev/null 2>&1; then
+  GCC="riscv64-unknown-elf-gcc"
+  OBJCOPY="riscv64-unknown-elf-objcopy"
+  OBJDUMP="riscv64-unknown-elf-objdump"
+elif command -v riscv32-unknown-elf-gcc >/dev/null 2>&1; then
+  GCC="riscv32-unknown-elf-gcc"
+  OBJCOPY="riscv32-unknown-elf-objcopy"
+  OBJDUMP="riscv32-unknown-elf-objdump"
+else
+  echo "ERROR: Could not find riscv64-unknown-elf-gcc or riscv32-unknown-elf-gcc." >&2
+  echo "Install a RISC-V bare-metal toolchain, or set RISCV_PREFIX manually." >&2
+  exit 1
+fi
+
+base="$(basename "$ASM" .S)"
+ELF="$BUILD_DIR/${base}.elf"
+BIN="$BUILD_DIR/${base}.bin"
+DUMP="$BUILD_DIR/${base}.dump"
+
+"$GCC" \
+  -march=rv32i -mabi=ilp32 \
+  -nostdlib -nostartfiles -ffreestanding \
+  -Wl,--no-relax -Wl,--build-id=none \
+  -T "$SCRIPT_DIR/link.ld" \
+  -o "$ELF" "$ASM"
 
 "$OBJCOPY" -O binary "$ELF" "$BIN"
-python3 tools/bin_to_hex.py "$BIN" "$OUT_HEX"
-"$OBJDUMP" -d "$ELF" > "$DIS"
+"$OBJDUMP" -d "$ELF" > "$DUMP"
+"$SCRIPT_DIR/bin_to_hex.py" "$BIN" "$OUT_HEX"
 
-echo "Built: $OUT_HEX"
-echo "ELF:   $ELF"
-echo "Dump:  $DIS"
+echo "[build_hex] ASM  $ASM"
+echo "[build_hex] ELF  $ELF"
+echo "[build_hex] DUMP $DUMP"
+echo "[build_hex] HEX  $OUT_HEX"

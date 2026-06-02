@@ -1,34 +1,36 @@
-# Verilator Program Hex Tests
+# Verilator Program Hex Files
 
-Each `.hex` file contains one 32-bit little-endian RISC-V instruction word per line, formatted for `$readmemh()` in `simple_mem.sv`.
+This directory stores `.hex` files loaded by `simple_mem.sv` using `$readmemh`.
+Each line is one 32-bit little-endian RISC-V instruction/data word printed as an 8-digit hex value.
 
-## Baseline tests
+The preferred source of truth is now `../asm_tests/*.S`.
+Rebuild all `.hex` files with:
 
-| Program | Purpose |
-|---|---|
-| `test_addi.hex` | Basic immediate arithmetic and register writeback |
-| `test_lw_sw.hex` | Word store/load and SRAM access |
-| `test_branch.hex` | Conditional branches and PC redirect |
-| `test_jump.hex` | JAL/JALR, PC redirect, and link register writeback |
+```bash
+cd sim
+./tools/build_all_hex.sh
+```
 
-## Extra RV32I directed tests
+Run the full regression with:
 
-| Program | Purpose |
-|---|---|
-| `test_rtype.hex` | R-type ALU operations: add, sub, logic, shifts, comparisons |
-| `test_itype.hex` | I-type ALU operations: addi, logic immediates, shifts, comparisons |
-| `test_load_store.hex` | Byte, halfword, word loads/stores and sign/zero extension |
-| `test_x0.hex` | Confirms writes to x0 are ignored |
-| `test_jalr_align.hex` | Confirms JALR clears bit 0 and writes PC+4 to rd |
+```bash
+cd sim
+./run_all_tests.sh
+```
 
-## Expected-trap tests
+## Tests
 
-These tests should be run with `+expect-trap`.
-
-| Program | Purpose |
-|---|---|
-| `test_illegal.hex` | Confirms an illegal/unsupported instruction enters trap cleanly |
-| `test_misaligned_load.hex` | Confirms misaligned word load enters trap cleanly |
-| `test_misaligned_store.hex` | Confirms misaligned word store enters trap cleanly |
-
-Note: the current CPU bus has no `bus_err_i` input, so truly unmapped addresses cannot currently trap at the CPU level. The current memory fault tests therefore use misalignment, which your CPU already detects internally.
+| Hex file | Purpose | Expected result |
+|---|---|---|
+| `test_addi.hex` | Basic ADDI/arithmetic/writeback | `0xcafe0001` |
+| `test_lw_sw.hex` | Basic word load/store | `0xcafe0002` |
+| `test_branch.hex` | Conditional branch and loop behavior | `0xcafe0003` |
+| `test_jump.hex` | JAL/JALR jump/link behavior | `0xcafe0004` |
+| `test_rtype.hex` | R-type ALU instructions | `0xcafe0005` |
+| `test_itype.hex` | I-type ALU instructions | `0xcafe0006` |
+| `test_load_store.hex` | Byte/halfword/word load-store behavior | `0xcafe0007` |
+| `test_x0.hex` | Hardwired x0 behavior | `0xcafe0008` |
+| `test_jalr_align.hex` | JALR target bit-0 clearing | `0xcafe0009` |
+| `test_illegal.hex` | Illegal instruction handling | expected trap |
+| `test_misaligned_load.hex` | Misaligned load handling | expected trap |
+| `test_misaligned_store.hex` | Misaligned store handling | expected trap |

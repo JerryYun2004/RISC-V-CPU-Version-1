@@ -1,41 +1,45 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Runs the complete CPU-only Verilator regression suite.
-# Run from sim/:
-#   ./run_all_tests.sh
+# Full CPU-only regression runner.
+# Assumes it is executed from the sim/ directory.
 
-NORMAL_TESTS=(
-  test_addi
-  test_lw_sw
-  test_branch
-  test_jump
-  test_rtype
-  test_itype
-  test_load_store
-  test_x0
-  test_jalr_align
-)
+run_normal() {
+  local name="$1"
+  echo
+  echo "===== Running ${name} ====="
+  make run PROGRAM="$name"
+}
 
-TRAP_TESTS=(
-  test_illegal
-  test_misaligned_load
-  test_misaligned_store
-)
+run_trap() {
+  local name="$1"
+  echo
+  echo "===== Running ${name} / expected trap ====="
+  make run PROGRAM="$name" EXPECT_TRAP=1
+}
 
-make build
+# Build hex files from assembly first when the toolchain is available.
+if command -v riscv64-unknown-elf-gcc >/dev/null 2>&1 || command -v riscv32-unknown-elf-gcc >/dev/null 2>&1 || [[ -n "${RISCV_PREFIX:-}" ]]; then
+  echo "[run_all_tests] Building .hex files from sim/asm_tests/*.S"
+  ./tools/build_all_hex.sh
+else
+  echo "[run_all_tests] RISC-V GCC not found; using existing programs/*.hex files."
+  echo "[run_all_tests] To rebuild from assembly, install riscv64-unknown-elf-gcc or set RISCV_PREFIX."
+fi
 
-for t in "${NORMAL_TESTS[@]}"; do
-  echo ""
-  echo "===== Running ${t} ====="
-  ./obj_dir/Vtb_cpu_top +hex="programs/${t}.hex" +max-cycles=200000
-done
+run_normal test_addi
+run_normal test_lw_sw
+run_normal test_branch
+run_normal test_jump
+run_normal test_rtype
+run_normal test_itype
+run_normal test_load_store
+run_normal test_x0
+run_normal test_jalr_align
 
-for t in "${TRAP_TESTS[@]}"; do
-  echo ""
-  echo "===== Running ${t} / expected trap ====="
-  ./obj_dir/Vtb_cpu_top +hex="programs/${t}.hex" +max-cycles=200000 +expect-trap
-done
+run_trap test_illegal
+run_trap test_misaligned_load
+run_trap test_misaligned_store 
 
-echo ""
-echo "===== ALL CPU TESTS PASSED ====="
+echo
+echo "[run_all_tests] PASS: all CPU regression tests passed."

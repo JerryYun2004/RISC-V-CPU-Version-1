@@ -1,15 +1,38 @@
 OUTPUT_ARCH(riscv)
 ENTRY(_start)
 
+MEMORY
+{
+  RAM (rwx) : ORIGIN = 0x00000000, LENGTH = 64K
+}
+
 SECTIONS
 {
-  . = 0x00000000;
-  .text : {
-    *(.text.init)
+  . = ORIGIN(RAM);
+  .text : ALIGN(4)
+  {
+    KEEP(*(.text.start))
     *(.text*)
-  }
+    *(.rodata*)
+  } > RAM
 
-  .rodata : { *(.rodata*) }
-  .data   : { *(.data*) }
-  .bss    : { *(.bss*) *(COMMON) }
+  .data : ALIGN(4)
+  {
+    *(.sdata*)
+    *(.data*)
+  } > RAM
+
+  .bss : ALIGN(4)
+  {
+    *(.sbss*)
+    *(.bss*)
+    *(COMMON)
+  } > RAM
+
+  /DISCARD/ :
+  {
+    *(.comment*)
+    *(.riscv.attributes*)
+    *(.note*)
+  }
 }

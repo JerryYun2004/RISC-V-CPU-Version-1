@@ -2,31 +2,28 @@
 
 ## `build_hex.sh`
 
-Builds a RISC-V assembly file into the `.hex` format used by `simple_mem.sv`.
-
-Example:
+Build one assembly test into a `.hex` file:
 
 ```bash
-cd sim
-tools/build_hex.sh asm_reference/test_rtype.S programs/test_rtype.hex
+./tools/build_hex.sh asm_tests/test_addi.S
 ```
 
-By default, it uses `riscv64-unknown-elf-gcc`, `objcopy`, and `objdump`.
-Override the tool prefix with:
+## `build_all_hex.sh`
+
+Build all tests from `asm_tests/*.S` into `programs/*.hex`:
 
 ```bash
-CROSS_COMPILE=riscv32-unknown-elf- tools/build_hex.sh asm_reference/test_rtype.S
+./tools/build_all_hex.sh
 ```
 
 ## `disasm_hex.sh`
 
-Disassembles a `.hex` program for debugging:
+Disassemble a generated hex file:
 
 ```bash
-cd sim
-tools/disasm_hex.sh programs/test_addi.hex
+./tools/disasm_hex.sh programs/test_addi.hex
 ```
 
 ## `bin_to_hex.py`
 
-Converts a raw little-endian RV32 binary into one 32-bit hex word per line.
+Converts a raw little-endian RISC-V binary into one 32-bit hex word per line for `$readmemh`.
