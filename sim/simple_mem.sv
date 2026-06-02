@@ -161,7 +161,7 @@ module tb_cpu_top (
 
   cpu_top #(
       .RESET_PC (32'h0000_0000),
-      .TRACE_EN (1'b1)
+      .TRACE_EN (1'b0)
   ) u_cpu (
       .clk_i        (clk_i),
       .rst_ni       (rst_ni),
