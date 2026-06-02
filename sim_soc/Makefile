@@ -10,7 +10,7 @@ VERILATOR ?= verilator
 CPU_DIR   ?= ../cpu_rtl/cpu
 SOC_DIR   ?= ../soc
 TOP       ?= soc_top
-PROGRAM   ?= $(PROGRAM)
+PROGRAM   ?= test_soc_smoke
 MAX_CYCLES ?= 200000
 WAVE      ?= 0
 EXPECT_TRAP ?= 0
@@ -55,7 +55,7 @@ endif
 
 RUN_ARGS += +hex=programs/$(PROGRAM).hex +max-cycles=$(MAX_CYCLES)
 
-SOC_TESTS = $(PROGRAM)
+SOC_TESTS = test_soc_smoke test_soc_sram test_soc_mmio test_soc_branch_jump
 
 .PHONY: build run test_soc clean list build_hex
 
